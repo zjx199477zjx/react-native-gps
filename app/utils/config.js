@@ -1,0 +1,48 @@
+
+export var config={
+    ticket:'',
+    host:'https://ac-link.com/webapi/'
+}
+
+export var LANG_CODE={
+        errcode1:'Parameter error!',
+        errcode2:'Session timeout!',
+        errcode3:'Not logged in!',
+        errcode4:'Sql execution failed (error occurred)!',
+        errcode5:'No permission!',
+        errcode6:'Not yet supported!',
+        errcode7:'Unknown error!',
+        errcode8:'Internal error!',
+        errcode9:'The resource does not exist!',
+        errcode10:'JSON parsing failed!',
+        errcode11:'Api does not exist!',
+        errcode12:'Http request failed!',
+        errcode13:'Http request timeout!',
+        errcode14:'Illegal request!',
+        errcode15:'Signature verification failed!',
+        errcode16:'Time is abnormal!',
+        errcode17:'Requests are too frequent!',
+        errcode18:'No data!',
+        errcode19:'api data is not available!',
+        errcode21:'No upload data!',
+        errcode22:'Upload file is too big!',
+        errcode23:'Disallowed upload format!',
+        errcode24:'No matching data or no permissions!',
+        errcode25:'Data is unavailable!',
+        errcode26:'Database is unavailable!',
+        errcode27:'File reading error!',
+        errcode28:'File write error!',
+        errcode29:'File Copy Error!',
+        errcode30:'File move error!',
+        errcode31:'Account is not activated!',
+        errcode32:'The account has been locked!',
+        errcode33:'Account has been disabled!',
+        errcode34:'The account already exists!',
+        errcode35:'The account status is undefined!',
+        errcode36:'The account does not exist!',
+        errcode37:'No change in account balance!',
+        errcode38:'Account balance query failed!',
+        errcode39:'Account balance is insufficient!',
+        errcode40:'There are too many consecutive login failures!',
+        errcode41:'Username or password is wrong!'
+}
