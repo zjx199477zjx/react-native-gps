@@ -1,0 +1,71 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.news_pro">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
+    <!-- // google  If you need FINE location, insert this one -->
+   <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- //google  Or insert this line if you don't need FINE location -->
+   <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
+    <!-- 缓存开启 -->
+   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+   
+   <!-- 安卓6.0以上建议 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <application
+      android:name=".MainApplication"
+      android:label="@string/app_name"
+      android:icon="@mipmap/ic_launcher"
+      android:allowBackup="false"
+      android:theme="@style/AppTheme">
+
+     <uses-library android:name="org.apache.http.legacy" android:required="false" />
+     <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyBmyGCVnYEzxX2T9tLiFeyCLTrgAy68M-Y"/>
+    
+
+    <meta-data android:name="JPUSH_CHANNEL" android:value="${JPUSH_CHANNEL}" />
+    <meta-data android:name="JPUSH_APPKEY" android:value="${JPUSH_APPKEY}" />
+      <!-- notification satrt -->
+<!--     <meta-data android:name="com.dieam.reactnativepushnotification.notification_channel_name" android:value="GPS Routing" />-->
+<!--     <meta-data android:name="com.dieam.reactnativepushnotification.notification_channel_description" android:value ="设备上线离线通知" />-->
+<!--         &lt;!&ndash; <！-将资源名称更改为您应用的重点颜色-或您想要的任何其他颜色- ->  &ndash;&gt;-->
+<!--     <meta-data android:name="com.dieam.reactnativepushnotification.notification_color" android:resource=" @android:#ffffff"/>-->
+<!--      -->
+<!--      <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />-->
+<!--      <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver">-->
+<!--          <intent-filter>-->
+<!--                <action android:name="android.intent.action.BOOT_COMPLETED" />-->
+<!--          </intent-filter>-->
+<!--      </receiver>-->
+<!--      <service android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationRegistrationService"/>-->
+<!--      <service-->
+<!--            android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"-->
+<!--            android:exported="false" >-->
+<!--            <intent-filter>-->
+<!--                <action android:name="com.google.firebase.MESSAGING_EVENT" />-->
+<!--            </intent-filter>-->
+<!--        </service>-->
+       <!-- notification end -->
+        <!-- For test only 测试的主程序-->
+         <!-- For test only 测试的主程序-->
+
+
+      <activity
+        android:name=".MainActivity"
+        android:label="@string/app_name"
+        android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+        android:windowSoftInputMode="adjustResize">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+      </activity>
+      
+      <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+    </application>
+
+</manifest>
