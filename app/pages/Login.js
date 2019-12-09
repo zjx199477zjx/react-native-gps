@@ -53,10 +53,16 @@ export default class Login extends PureComponent{
     qureyStore(key,cb){
         AsyncStorage.getItem(key, (err, result) => {
             if (!err) {
-                const jsonValue = JSON.parse(result)
-                cb && cb(jsonValue)
+                try{
+                    result =result || '{}';
+                    const jsonValue = JSON.parse(result)
+                    cb && cb(jsonValue)
+                }catch(err){
+
+                }
+                
             }else{
-                console.log(err)
+                 cb && cb({})
             }
         })
     }
@@ -100,6 +106,7 @@ export default class Login extends PureComponent{
                         //expires为有效时间
                         expires: 1000* 500000
                     })
+                    userInfo.is_exit=false;
                     _this.StoreSave('loginSave',userInfo)
                     JPushModule.openLients();
                     _this.props.navigation.navigate('Me',userInfo);

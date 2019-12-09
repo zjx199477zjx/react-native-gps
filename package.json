@@ -21,7 +21,7 @@
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
     "react-github-fork-ribbon": "^0.6.0",
-    "react-native": "^0.55.4",
+    "react-native": "0.59.5",
     "react-native-checkbox": "^2.0.0",
     "react-native-cli": "^2.0.1",
     "react-native-easy-toast": "^1.1.0",

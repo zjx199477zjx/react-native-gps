@@ -46,6 +46,29 @@ export default class Me extends PureComponent {
             this.settingData[3].isHide =false;
         }
     }
+
+    // 本地缓存
+    StoreSave(key, value) {
+        if(typeof value != 'string') value=JSON.stringify(value);
+        return AsyncStorage.setItem(key, value)
+    }
+
+    qureyStore(key,cb){
+        AsyncStorage.getItem(key, (err, result) => {
+            if (!err) {
+                try{
+                    result =result || '{}';
+                    const jsonValue = JSON.parse(result)
+                    cb && cb(jsonValue)
+                }catch(err){
+
+                }
+                
+            }else{
+                // console.log(err)
+            }
+        })
+    }
      
 
     returnData(isLogin, userInfo) {
@@ -53,21 +76,22 @@ export default class Me extends PureComponent {
     }
 
     _onPressItem =(item) => {
+        let _this =this;
         // 打开设备列表
         if(item['deviceList']){
-            const navigation =this.props.navigation.push;
+            const navigation =_this.props.navigation.push;
             navigation('DeviceList')
             return 
         }
         // 打开设备状态列表
         if(item["deviceState"]){
-            const navigation =this.props.navigation.push;
+            const navigation =_this.props.navigation.push;
             navigation('DeviceState')
             return 
         }
 
         if(item["about"]){
-            const navigation =this.props.navigation.push;
+            const navigation =_this.props.navigation.push;
             navigation('About');
             return 
         }
@@ -77,15 +101,23 @@ export default class Me extends PureComponent {
             // JPushModule.colseLients();
             JPushModule.sendLientsID("null");
 
-            const userInfo =this.state.userInfo;
-            this.setState({
+            const userInfo =_this.state.userInfo;
+            _this.setState({
                 isLogin:false,
                 userInfo:{},
             })
             item.isHide=true;
-            const navigation =this.props.navigation.push;
             if(global.storage) global.storage.cache={};
-            navigation('Login', userInfo)
+
+             _this.qureyStore('loginSave',(data)=>{
+                data.is_exit=true;
+                _this.StoreSave('loginSave',data)
+
+                const navigation =_this.props.navigation.push;
+                navigation('Login', userInfo);
+             })
+           
+            
         }
 
     }
@@ -117,14 +149,27 @@ export default class Me extends PureComponent {
        
     ]
     componentDidMount() {
-        this.getStorage();
-        var params =((this.props.navigation || {}).state || {}).params || {};
+        let _this =this;
+        _this.getStorage();
+        var params =((_this.props.navigation || {}).state || {}).params || {};
         if(params.tel || params.yunid){
-            this.setState({
+            _this.setState({
                 userInfo: params,
                 isLogin:true
             })
-            this.settingData[3].isHide =false;
+            _this.settingData[3].isHide =false;
+        }else{
+             _this.qureyStore('loginSave',(data)=>{
+                if(data.yunid && !data.is_exit){
+                    _this.setState({
+                         userInfo: data,
+                         isLogin:true
+                    })
+                   
+                }
+             })
+              _this.settingData[3].isHide =false;
+             
         }
         //顺序执行
         Animated.sequence([

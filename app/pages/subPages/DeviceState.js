@@ -54,22 +54,25 @@ export default class DeviceState extends PureComponent{
         if(cache) return (cache.rawData || {}).userInfo;
         return {};
     }
+    _qureyStore(key,cb){
+        AsyncStorage.getItem(key, (err, result) => {
+            if (!err) {
+                try{
+                    result =result || '{}';
+                    const jsonValue = JSON.parse(result)
+                    cb && cb(jsonValue)
+                }catch(err){
 
-   _getNewList(user){
-       if(this.is_load && !user) return;
-       this.is_load=true;
+                }
+            }else{
+                cb && cb({})
+            }
+        })
+    }
 
-       let _this = this;
-        
-        const userInfo =user || _this.getStorage();
-        if(!userInfo.yunid){
-            _this.refs.toast.show('Please login first');
-            return _this.props.navigation.push('Login',{link:'Me'});
-        }  
-        // 测试会话过期
-        // if(!user)userInfo.sid='f0322fe479895d718973aa6dea08f21e'
-        let jsonData ={item:'device',yunid:userInfo.yunid,sid:userInfo.sid,min:_this.currPage,max:20};
-       ajax({
+    nextRequest(jsonData,userInfo){
+        let _this =this;
+        ajax({
             url:`https://ac-link.com/webapi/get_message_log`,
             method:'POST',
             data:jsonData,
@@ -119,6 +122,37 @@ export default class DeviceState extends PureComponent{
             },
             
         });
+    }
+
+   _getNewList(user){
+       if(this.is_load && !user) return;
+       this.is_load=true;
+
+       let _this = this;
+        
+        // const userInfo =user || _this.getStorage();
+        // if(!userInfo.yunid){
+        //     _this.refs.toast.show('Please login first');
+        //     return _this.props.navigation.push('Login',{link:'Me'});
+        // }  
+        _this._qureyStore('loginSave',(data)=>{
+             if(!data.yunid || data.is_exit){
+                const userInfo =_this.getStorage();
+                if(userInfo.yunid){
+                    let jsonData ={item:'device',yunid:userInfo.yunid,sid:userInfo.sid,min:_this.currPage,max:20};
+                    return _this.nextRequest(jsonData,userInfo);
+                }
+                _this.refs.toast.show('Please login first');
+                return _this.props.navigation.push('Login',{link:'Me'});
+             }else{
+                let jsonData ={item:'device',yunid:data.yunid,sid:data.sid,min:_this.currPage,max:20};
+                 _this.nextRequest(jsonData,data);
+             }
+        })
+        // 测试会话过期
+        // if(!user)userInfo.sid='f0322fe479895d718973aa6dea08f21e'
+        
+       
    }
     //上拉加载更多
     _onEndReached = () => {

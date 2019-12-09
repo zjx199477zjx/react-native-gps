@@ -10,10 +10,10 @@ export default class MyMap extends PureComponent {
         super(props)
         this.state = {
             region:{
-                latitude: 20.9948891,
-                longitude: 105.799677,
-                latitudeDelta: 20,
-                longitudeDelta:20,
+                latitude: 40.4620549520,
+                longitude: 174.2456935219,
+                latitudeDelta: 100,
+                longitudeDelta:100,
             },
             deviceInfo:{},
             title:'device1',
@@ -194,7 +194,7 @@ export default class MyMap extends PureComponent {
                     onRegionChange={this.mapsRegionChange}
                     
                     >
-                    <Marker 
+                    {this.state.deviceInfo.gps_location ?<Marker 
                         coordinate={this.state.region}
                         pinColor={'blue'}
                         ref={ref => this.pickUpMarker = ref}
@@ -213,7 +213,7 @@ export default class MyMap extends PureComponent {
                                 <Text style={styles.callout}>{this.state.description2? `Close to the location: ${this.state.description2}`:''}</Text>
                             </View>
                         </Callout>
-                     </Marker>
+                     </Marker> : null }
                         
                 </MapView>
             </View>

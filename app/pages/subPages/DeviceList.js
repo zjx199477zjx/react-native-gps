@@ -50,23 +50,26 @@ export default class DeviceList extends PureComponent{
         if(cache) return (cache.rawData || {}).userInfo;
         return false;
     }
+    _qureyStore(key,cb){
+        AsyncStorage.getItem(key, (err, result) => {
+            if (!err) {
+                try{
+                    result =result || '{}';
+                    const jsonValue = JSON.parse(result)
+                    cb && cb(jsonValue)
+                }catch(err){
 
-   _getNewList(){
-       if(this.is_load) return;
-       this.is_load=true
+                }
+            }else{
+                cb && cb({})
+            }
+        })
+    }
 
-        let _this = this;
-        // const userInfo = _this.state.userInfo || props.navigation.state.params || {};
-         const userInfo =_this.getStorage();
-        if(!userInfo.yunid){
-            _this.refs.toast.show('Please login first');
-            return _this.props.navigation.push('Login',{link:'Me'});
-        }  
-        // 测试会话过期
-        // if(!user)userInfo.sid='f0322fe479895d718973aa6dea08f21e'
-
-        let data ={item:'device',page:_this.currPage,page_max:20,login_id:userInfo.yunid,sid:userInfo.sid,GPSAPP:true};
-       ajax({
+    // 数据请求
+    nextRequest(data,userInfo){
+        let _this =this;
+         ajax({
             url:`https://ac-link.com/webapi/list`,
             method:'POST',
             data:data,
@@ -94,7 +97,7 @@ export default class DeviceList extends PureComponent{
                     if(length < 20){
                         //  _this.refs.toast.show('No more data');
                     }else{
-                         _this.is_load=false
+                        _this.is_load=false
                     }
                     _this.state.refreshing && _this.setState({refreshing: false});
                     return;
@@ -111,16 +114,47 @@ export default class DeviceList extends PureComponent{
                     _this.is_load=false
                     _this.state.refreshing && _this.setState({refreshing: false, });
                 }
-                 
+                
                 
             },
             error: (err) => {
-                 _this.refs.toast.show('Network error');
-                 _this.is_load=false
+                _this.refs.toast.show('Network error');
+                _this.is_load=false
                 _this.state.refreshing && _this.setState({refreshing: false, });
             },
             
         });
+    }
+
+   _getNewList(){
+       if(this.is_load) return;
+       this.is_load=true
+
+        let _this = this;
+        // const userInfo = _this.state.userInfo || props.navigation.state.params || {};
+        //  const userInfo =_this.getStorage();
+        // if(!userInfo.yunid){
+        //     _this.refs.toast.show('Please login first');
+        //     return _this.props.navigation.push('Login',{link:'Me'});
+        // }
+        _this._qureyStore('loginSave',(data)=>{
+            //  if(data.is_exit)
+             if(!data.yunid || data.is_exit){
+                const userInfo =_this.getStorage();
+                if(userInfo.yunid){
+                    let json ={item:'device',page:_this.currPage,page_max:20,login_id:userInfo.yunid,sid:userInfo.sid,GPSAPP:true};
+                    return _this.nextRequest(json,userInfo);
+                }
+                _this.refs.toast.show('Please login first');
+                return _this.props.navigation.push('Login',{link:'Me'});
+             }else{
+                 let json ={item:'device',page:_this.currPage,page_max:20,login_id:data.yunid,sid:data.sid,GPSAPP:true};
+                 _this.nextRequest(json,data);
+             }
+        })
+        // 测试会话过期
+        // if(!user)userInfo.sid='f0322fe479895d718973aa6dea08f21e'
+       
    }
     //上拉加载更多
     // loadTop=true;
@@ -238,9 +272,6 @@ export default class DeviceList extends PureComponent{
     }
     _onPressItem = (item) => {
         if(!item.gps_location || item.gps_location.length < 4) return;
-        //  this.refs.toast.show(item.gps_location)
-        // console.log(item.gps_location)
-        // return;
         const navigation =this.props.navigation;
         navigation.navigate('Location', item)
     }
