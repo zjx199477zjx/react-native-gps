@@ -7,12 +7,13 @@ import {
     Image,
     AsyncStorage,
     Animated,
+    Dimensions,
     ImageBackground,
      NativeModules
 }from 'react-native'
 import Header from '../../components/LoginHeader';
 
-
+const {width: sreenWidth, height: screenHeight} = Dimensions.get('window');
 export default class About extends PureComponent{
     constructor(props){
         super(props);
@@ -42,7 +43,7 @@ export default class About extends PureComponent{
     ]
     render(){
         return(
-            <View>
+            <View style={styles.mainCss}>
                 <Header  navigation={this.props.navigation} centerText={'About Us'}/>
                  <TouchableOpacity 
                     item={this.state} 
@@ -51,11 +52,11 @@ export default class About extends PureComponent{
                         <Animated.Image style={styles.userImg}  source={require('./../../../assets/images/logo.png')} resizeMode={'contain'} />
 
                         {/* <Animated.Text style={styles.userNickname}>{loginInfo.tel || loginInfo.yunid || 'Not logged in'}</Animated.Text> */}
-                        <Text>Version: 1.0 (Build 19.1130.193035)</Text>
+                        <Text>Version: 1.2 (Build 19.1130.193035)</Text>
                     </View>
                 </TouchableOpacity>
                  {/* 过渡条 */}
-                <View style={styles.transitionView}></View>
+                {/* <View style={styles.transitionView}></View> */}
 
                 {/* 设置列表 */}
                 <View style={styles.settingListContainer}>
@@ -141,6 +142,11 @@ class ListItem extends React.PureComponent {
 }
 
 const styles =StyleSheet.create({
+    mainCss:{
+        width:sreenWidth,
+        height:screenHeight,
+        backgroundColor:'#FFFFFF'
+    },
     itemContainer: {
         flexDirection: 'row',
         backgroundColor: '#f8f8f8',

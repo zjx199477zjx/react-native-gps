@@ -5,4 +5,9 @@
         <!-- Customize your theme here. -->
     </style>
      <color name="white">#FFF</color>
+     <style name="SplashThemeLayer" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/bg_splash_layer_list</item>
+    </style>
 </resources>

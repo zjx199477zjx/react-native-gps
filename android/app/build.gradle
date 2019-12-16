@@ -101,8 +101,8 @@ android {
         applicationId "com.news_pro"
         minSdkVersion 19
         targetSdkVersion 28 //23 =》28
-        versionCode 3
-        versionName "1.0"
+        versionCode 6
+        versionName "1.2"
         ndk {
            abiFilters "arm64-v8a","armeabi-v7a","x86",'x86_64'  //"arm64-v8a","armeabi-v7a","x86_64"
             //   abiFilters "armeabi-v7a","x86"

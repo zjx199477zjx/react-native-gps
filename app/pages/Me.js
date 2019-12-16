@@ -99,7 +99,7 @@ export default class Me extends PureComponent {
         if(item["exitLogin"]){
             // 默认关闭通知
             // JPushModule.colseLients();
-            JPushModule.sendLientsID("null");
+            JPushModule.openLients(true);
 
             const userInfo =_this.state.userInfo;
             _this.setState({

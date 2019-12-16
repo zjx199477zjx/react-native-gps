@@ -38,7 +38,6 @@ export default class LoginHeader extends PureComponent {
         if(this.props.load){
             JPushModule.queryLients((data) =>{
                 let object=data.data[0] || {};
-                console.log(object)
                 _this.setState({
                     trueSwitchIsOn:object.push_state=='1'? true:false
                 })
@@ -65,6 +64,7 @@ export default class LoginHeader extends PureComponent {
     openJPush(){
         let _this =this;
         JPushModule.startLients();
+        JPushModule.openLients();
     }
 
     // 关闭消息推送

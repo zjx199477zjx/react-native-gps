@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react'
 import {
   DeviceEventEmitter,
   NativeModules,
+  AsyncStorage,
   Platform
 } from 'react-native';
 import ajax from './utils/requestAjax';
@@ -605,26 +606,27 @@ export default class JPush extends PureComponent{
 
   static initLients(navigation,is_open){
     let _this =this;
-    let userInfo =_this.getStorage();
-    if(!is_open){
-      if(_this.isOpenNotification) return;
-    }
-    if(!userInfo.yunid) return;
-    // return;
-    // _this.setLoggerEnable({"debug":true})
-      // 初始化推送服务
-    _this.init();
+    // let userInfo =_this.getStorage();
+    _this._qureyStore("loginSave",(userInfo) =>{
+        if(!is_open){
+          if(_this.isOpenNotification) return;
+        }
+        if(!userInfo.yunid) return;
+          // 初始化推送服务
+        _this.init();
 
-    local_data_Notification={}
-    _this.addNotificationListener((data) =>{
-        if(!data) return;
-        if(local_data_Notification[data.messageID]){
-          navigation && navigation();
-          return;
-        } 
-       local_data_Notification[data.messageID]=data.content;
+        let local_data_Notification={};
+        _this.addNotificationListener((data) =>{
+            if(!data) return;
+            if(local_data_Notification[data.messageID]){
+              navigation && navigation();
+              return;
+            } 
+          local_data_Notification[data.messageID]=data.content;
+        })
+        _this.isOpenNotification=true;
     })
-    _this.isOpenNotification=true;
+   
   }
 
   static getStorage(){
@@ -633,62 +635,85 @@ export default class JPush extends PureComponent{
       if(cache) return (cache.rawData || {}).userInfo;
       return {};
   }
+  static _qureyStore(key,cb){
+      AsyncStorage.getItem(key, (err, result) => {
+          if (!err) {
+              try{
+                  result =result || '{}';
+                  const jsonValue = JSON.parse(result)
+                  cb && cb(jsonValue)
+              }catch(err){
+
+              }
+          }else{
+              cb && cb({})
+          }
+      })
+    }
 
   // 云端发送消息 https://ac-link.com
-  static sendLientsID(RegistrationID){
+  static sendLientsID(RegistrationID,is_exit){
     const _this =this;
-    const userInfo =_this.getStorage();
-        if(!userInfo.yunid || !RegistrationID) return;
-        let jsonData ={item:'device',yunid:userInfo.yunid,register_id:RegistrationID};
-        ajax({
-             url:`https://ac-link.com/webapi/setNotificationType`,
-             method:'POST',
-             data:jsonData,
-            success: (data) => {
-                // console.log("sendLientsID success")
-            },
-            error: (err) => {
-                // console.log("sendLientsID error")
-            },
-        })
+    // const userInfo =_this.getStorage();
+
+      _this._qureyStore("loginSave",(userInfo) =>{
+          if(!userInfo.yunid || !RegistrationID) return;
+          let jsonData ={item:'device',yunid:userInfo.yunid,register_id:RegistrationID,is_exit:is_exit};
+          ajax({
+              url:`https://ac-link.com/webapi/setNotificationType`,
+              method:'POST',
+              data:jsonData,
+              success: (data) => {
+                  // console.log("sendLientsID success")
+              },
+              error: (err) => {
+                  // console.log("sendLientsID error")
+              },
+          })
+      })
+        
   }
 
   // 开启消息推送服务
   static startLients(){
      const _this =this;
-      const userInfo =_this.getStorage();
-      if(!userInfo.yunid) return;
-      let jsonData ={item:'device',yunid:userInfo.yunid,query:1};
-      ajax({
-          url:`https://ac-link.com/webapi/setNotificationType`,
-          method:'POST',
-          data:jsonData,
-        success: (data) => {
-            // console.log("colseLients success")
-        },
-        error: (err) => {
-            // console.log("colseLients error")
-        },
-    })
+      // const userInfo =_this.getStorage();
+      _this._qureyStore("loginSave",(userInfo) =>{
+          if(!userInfo.yunid) return;
+          let jsonData ={item:'device',yunid:userInfo.yunid,query:1};
+          ajax({
+              url:`https://ac-link.com/webapi/setNotificationType`,
+              method:'POST',
+              data:jsonData,
+            success: (data) => {
+                // console.log("colseLients success")
+            },
+            error: (err) => {
+                // console.log("colseLients error")
+            },
+          })
+      })
   }
 
   // 关闭消息推送服务
   static colseLients(){
     const _this =this;
-    const userInfo =_this.getStorage();
-    if(!userInfo.yunid) return;
-    let jsonData ={item:'device',yunid:userInfo.yunid,query:0};
-    ajax({
-          url:`https://ac-link.com/webapi/setNotificationType`,
-          method:'POST',
-          data:jsonData,
-        success: (data) => {
-            // console.log("colseLients success")
-        },
-        error: (err) => {
-            // console.log("colseLients error")
-        },
-    })
+    // const userInfo =_this.getStorage();
+     _this._qureyStore("loginSave",(userInfo) =>{
+        if(!userInfo.yunid) return;
+        let jsonData ={item:'device',yunid:userInfo.yunid,query:0};
+        ajax({
+              url:`https://ac-link.com/webapi/setNotificationType`,
+              method:'POST',
+              data:jsonData,
+            success: (data) => {
+                // console.log("colseLients success")
+            },
+            error: (err) => {
+                // console.log("colseLients error")
+            },
+        })
+      })
   }
 
 
@@ -696,33 +721,36 @@ export default class JPush extends PureComponent{
   // 查询消息推送状态
   static queryLients(callback){
      const _this =this;
-      const userInfo =_this.getStorage();
-      if(!userInfo.yunid) return;
-      let jsonData ={item:'device',yunid:userInfo.yunid,query:'query'};
-      ajax({
-            url:`https://ac-link.com/webapi/setNotificationType`,
-            method:'POST',
-            data:jsonData,
-          success: (data) => {
-              // console.log("query success")
-              callback && callback(data);
-          },
-          error: (err) => {
-              // console.log("query error")
-          },
+      // const userInfo =_this.getStorage();
+      _this._qureyStore("loginSave",(userInfo) =>{
+        if(!userInfo.yunid) return;
+        let jsonData ={item:'device',yunid:userInfo.yunid,query:'query'};
+        ajax({
+              url:`https://ac-link.com/webapi/setNotificationType`,
+              method:'GET',
+              data:jsonData,
+            success: (data) => {
+                // console.log("query success")
+                callback && callback(data);
+            },
+            error: (err,text) => {
+                // console.log("query error")
+            },
+        })
       })
   }
 
   // 云端发送 RegistrationID
-  static openLients(){
+  static openLients(is_exit){
       const _this =this;
+      if(!is_exit) is_exit =false;
      _this.getRegistrationID((data)=>{
         if(!data) return;
         if (Platform.OS == "android") {
-           _this.sendLientsID(data);
+           _this.sendLientsID(data,is_exit);
         } else {
           if(!data.registerID) return;
-           _this.sendLientsID(data.registerID);
+           _this.sendLientsID(data.registerID,is_exit);
         }  
     })
   }

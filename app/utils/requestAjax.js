@@ -26,6 +26,7 @@ let ajax = function (opts){
        error: function (){},
   };
 
+  
   //二.用户参数覆盖默认参数    
   for(var key in opts){
     defaults[key] = opts[key];
